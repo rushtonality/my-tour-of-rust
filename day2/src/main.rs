@@ -33,6 +33,19 @@ pub fn largest_prime_factor(number : i64) -> i64 {
     prime
 }
 
+/// Return value in the Factorial Sequence for the given position.
+/// 1, 1, 2, 6, 24, 120, 720, ...
+///
+/// # Arguments
+/// 
+/// * `number` - The position to evaluate
+pub fn factorial_ver1(number : i64) -> i64 {
+    if number == 0 {
+        return 1;
+    }
+    return number * factorial_ver1(number-1);
+}
+
 fn main() {
     let number = 13195;
     // Largest prime factor of 13195: 29
@@ -51,6 +64,34 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_factorial_ver1_0() {
+        let number = 0;
+        let answer = 1;
+        assert_eq!(answer, factorial_ver1(number));
+    }
+
+    #[test]
+    fn test_factorial_ver1_1() {
+        let number = 1;
+        let answer = 1;
+        assert_eq!(answer, factorial_ver1(number));
+    }
+
+    #[test]
+    fn test_factorial_ver1_3() {
+        let number = 2;
+        let answer = 2;
+        assert_eq!(answer, factorial_ver1(number));
+    }
+
+    #[test]
+    fn test_factorial_ver1_10() {
+        let number = 10;
+        let answer = 3628800;
+        assert_eq!(answer, factorial_ver1(number));
+    }
 
     #[test]
     fn test_prime_1() {
