@@ -46,6 +46,23 @@ pub fn factorial_ver1(number : i64) -> i64 {
     return number * factorial_ver1(number-1);
 }
 
+/// Return value in the Factorial Sequence for the given position.
+/// 1, 1, 2, 6, 24, 120, 720, ...
+///
+/// # Arguments
+/// 
+/// * `number` - The position to evaluate
+pub fn factorial_ver2(number : i64) -> i64 {
+    factorial_ver2_internal(number, 1)
+}
+
+fn factorial_ver2_internal(number : i64, acc : i64) -> i64 {
+    if number == 0 {
+        return acc;
+    }
+    factorial_ver2_internal(number - 1, acc * number)
+}
+
 fn main() {
     let number = 13195;
     // Largest prime factor of 13195: 29
@@ -93,11 +110,39 @@ mod tests {
         assert_eq!(answer, factorial_ver1(number));
     }
 
+   #[test]
+    fn test_factorial_ver2_0() {
+        let number = 0;
+        let answer = 1;
+        assert_eq!(answer, factorial_ver2(number));
+    }
+
     #[test]
-    fn test_factorial_ver1_large() {
+    fn test_factorial_ver2_1() {
+        let number = 1;
+        let answer = 1;
+        assert_eq!(answer, factorial_ver2(number));
+    }
+
+    #[test]
+    fn test_factorial_ver2_2() {
+        let number = 2;
+        let answer = 2;
+        assert_eq!(answer, factorial_ver2(number));
+    }
+
+    #[test]
+    fn test_factorial_ver2_10() {
+        let number = 10;
+        let answer = 3628800;
+        assert_eq!(answer, factorial_ver2(number));
+    }
+
+    #[test]
+    fn test_factorial_ver2_large() {
         let number = i64::max_value();
-        let answer = -1;  // Expecting Stack Overflow
-        assert_eq!(answer, factorial_ver1(number));
+        let result = std::panic::catch_unwind(|| factorial_ver2(number));
+        assert!(result.is_err());
     }
 
     #[test]
