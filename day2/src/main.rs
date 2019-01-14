@@ -94,6 +94,13 @@ mod tests {
     }
 
     #[test]
+    fn test_factorial_ver1_large() {
+        let number = i64::max_value();
+        let answer = -1;  // Expecting Stack Overflow
+        assert_eq!(answer, factorial_ver1(number));
+    }
+
+    #[test]
     fn test_prime_1() {
         assert_eq!(true, is_prime(1));
     }
