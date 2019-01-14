@@ -1,3 +1,8 @@
+/// Return true if the number is prime 
+///
+/// # Arguments
+/// 
+/// * `number` - The number to check
 pub fn is_prime(number : i64) -> bool {
     let mut candidate : i64 = 2;
     let mut limit = number / 2;
@@ -12,6 +17,11 @@ pub fn is_prime(number : i64) -> bool {
     true
 }
 
+/// Return the largest factor for the number that is also prime.
+///
+/// # Arguments
+/// 
+/// * `number` - The number to check
 pub fn largest_prime_factor(number : i64) -> i64 {
     let mut prime = 1;
     for factor in 2..number {
