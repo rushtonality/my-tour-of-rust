@@ -260,6 +260,25 @@ mod tests {
     }
 
     #[test]
+    fn test_index() {
+        let a = Vec3::new(1.0,2.0, 3.1);
+        assert_eq!(a[0], 1.0);
+        assert_eq!(a[1], 2.0);
+        assert_eq!(a[2], 3.1);
+    }
+
+    #[test]
+    fn test_index_assign() {
+        let mut a = Vec3::new(1.0,2.0, 3.1);
+        a[0] = 2.0;
+        assert_eq!(a[0], 2.0);
+        a[1] = 3.0;
+        assert_eq!(a[1], 3.0);
+        a[2] = 4.0;
+        assert_eq!(a[2], 4.0);
+    }
+
+    #[test]
     fn test_neg() {
         let a = Vec3::new(1.0,2.0, 3.1);
         let answer = Vec3::new(-1.0,-2.0, -3.1);
@@ -275,29 +294,11 @@ mod tests {
     }
 
     #[test]
-    fn test_add_assign() {
-        let mut a = Vec3::new(1.0,2.0, 3.1);
-        let b = Vec3::new(1.0,2.0, 3.1);
-        let answer = Vec3::new(2.0,4.0, 6.2);
-        a += b;
-        assert_eq!(a, answer);
-    }
-
-    #[test]
     fn test_sub() {
         let a = Vec3::new(1.0,2.0, 3.1);
         let b = Vec3::new(1.0,2.0, 3.1);
         let answer = Vec3::new(0.0,0.0, 0.0);
         assert_eq!(a-b, answer);
-    }
-
-    #[test]
-    fn test_sub_assign() {
-        let mut a = Vec3::new(1.0,2.0, 3.1);
-        let b = Vec3::new(1.0,2.0, 3.1);
-        let answer = Vec3::new(0.0,0.0, 0.0);
-        a -= b;
-        assert_eq!(a, answer);
     }
 
     #[test]
@@ -314,6 +315,24 @@ mod tests {
         let b = Vec3::new(2.0,3.0, 4.0);
         let answer = Vec3::new(2.0,3.0, 3.0);
         assert_eq!(a/b, answer);
+    }
+
+    #[test]
+    fn test_add_assign() {
+        let mut a = Vec3::new(1.0,2.0, 3.1);
+        let b = Vec3::new(1.0,2.0, 3.1);
+        let answer = Vec3::new(2.0,4.0, 6.2);
+        a += b;
+        assert_eq!(a, answer);
+    }
+
+    #[test]
+    fn test_sub_assign() {
+        let mut a = Vec3::new(1.0,2.0, 3.1);
+        let b = Vec3::new(1.0,2.0, 3.1);
+        let answer = Vec3::new(0.0,0.0, 0.0);
+        a -= b;
+        assert_eq!(a, answer);
     }
 
     #[test]
