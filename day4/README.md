@@ -168,7 +168,7 @@ not get the result I was expecting when I ran the program.
 This exercise really forced me to understand Ownership and 
 borrowing more thoroughly then.
   
-## Splitting code into modules
+## Chapter 3 & 4 - Splitting code into modules
 My first objective in starting the rest of the chapters of
 the book was to figure out how to structure a project with
 multiple files and modules. 
@@ -207,20 +207,101 @@ pub mod ray;
 pub mod vec;
 ```
 
-## Traits and Polymorphism
+## Chapter 5 - Traits, Collections and Polymorphism
 
-## Ownership and Borrowing
+
+## Chapter 6 - drand48() - Crates 
+Searching the Internet I found the solution, but the common
+solution was to use a 3rd party crate to provide this
+functionality, so I got the experience the process of
+adding a new dependency.
+
+### Adding dependency to the Cargo.toml file
+```
+[dependencies]
+rand = "0.6"
+```
+
+### Using the external library in the code.
+```
+extern crate rand;
+use rand::Rng;
+
+pub fn drand48() -> f32 {
+    let rand_float : f32 = rand::thread_rng().gen();
+    rand_float
+}
+```
+
+Pretty straight forward and similar to maven and gradle in 
+the Java world, but not quite as trivial as being able to 
+search add using the npm command in the NodeJS/Javascript world.
+
+## Chapter 7 - Nothing new related to Rust
+
+This chapter was fairly uneventful regarding learning new Rust
+concepts.
+
+## Chapter 8
+This chapter is where I hit a wall, and learning Rust got real!
+The book uses the common C/C++ idea of passing an out parameter
+of a reference and then using that to get the output of the
+function.  Starting back in chapter 5, I was doing a direct
+port of this in Rust and it was working, until I now. 
+When a pointer to material was added to the hit record.
+
+Until now, I was adding the copy functionality to all of my
+structs, included Vec3, Ray, and HitRecord.  Like below.
+```
+#[derive(Copy, Clone, Debug)]
+pub struct HitRecord {
+    pub t : f32,
+    pub p : vec::Vec3,
+    pub normal : vec::Vec3,
+}
+```
+However with the following change in the C++ code, this became
+a problem, because now that the polymorphic Box<Material> was
+added I could no longer have this since Box forbids you from
+deriving Copy.
+
+```
+struct hit_record
+{
+    float t;
+    vec3 p;
+    vec3 normal;
+    material *mat_ptr
+};
+
+```
+
+Now I have the following struct, but I no long get the relative
+ease/laziness of not having to worry about ownership and moving
+out of contexts.
+```
+pub struct HitRecord {
+    pub t : f32,
+    pub p : vec::Vec3,
+    pub normal : vec::Vec3,
+    pub material : Box<Material>,
+}
+```
+
+### Ownership and Borrowing
 
 ### Moving vs Copying
 
 ### Out References
 
-## Option returns to handle nulls
+### Option returns to handle nulls
+So now that my hit function returns/moves the struct out of
+the function, what happens when I need to return a null
+pointer.  This is where the [Option](https://doc.rust-lang.org/std/option/enum.Option.html)
+enum comes into play.
 
-## External Crate
 
-
-
+## Concluding
 Like I said above.  This will likely be my last post on Rust
 for a while.  I plan to branch off into some other technologies.
 I hope someone has found this useful, because it has been
