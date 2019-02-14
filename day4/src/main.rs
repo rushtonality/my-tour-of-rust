@@ -128,42 +128,42 @@ fn standard_scene() -> HitableList {
 }
 
 fn main() {
-    let nx = 200;
-    let ny = 100;
-    let ns = 100;
+    // let nx = 200;
+    // let ny = 100;
+    // let ns = 100;
 
-    print!("P3\n{} {}\n255\n", nx, ny);
+    // print!("P3\n{} {}\n255\n", nx, ny);
 
-    let world = standard_scene();
-    let lookfrom = Vec3::new(-2.0, 2.0, 1.0);
-    let lookat = Vec3::new(0.0, 0.0, -1.0);
-    let dist_to_focus = (lookfrom-lookat).length();
-    let aperture = 0.1;
+    // let world = standard_scene();
+    // let lookfrom = Vec3::new(-2.0, 2.0, 1.0);
+    // let lookat = Vec3::new(0.0, 0.0, -1.0);
+    // let dist_to_focus = (lookfrom-lookat).length();
+    // let aperture = 0.1;
 
-    let camera = Camera::new(
-        lookfrom,
-        lookat,
-        Vec3::new(0.0,1.0, 0.0),
-        20.0, nx as f32 / ny as f32,
-        aperture, dist_to_focus);
+    // let camera = Camera::new(
+    //     lookfrom,
+    //     lookat,
+    //     Vec3::new(0.0,1.0, 0.0),
+    //     20.0, nx as f32 / ny as f32,
+    //     aperture, dist_to_focus);
 
-//    let nx = 1200;
-//    let ny = 800;
-//    let ns = 10;
-//
-//    print!("P3\n{} {}\n255\n", nx, ny);
-//
-//    let world = random_scene();
-//    let lookfrom = Vec3::new(13.0, 2.0, 3.0);
-//    let lookat = Vec3::new(0.0, 0.0, 0.0);
-//    let dist_to_focus= 10.0;
-//    let aperture = 0.1;
-//    let camera = Camera::new(
-//        lookfrom,
-//        lookat,
-//        Vec3::new(0.0,1.0, 0.0),
-//        20.0, nx as f32 / ny as f32,
-//        aperture, dist_to_focus);
+   let nx = 1200;
+   let ny = 800;
+   let ns = 10;
+
+   print!("P3\n{} {}\n255\n", nx, ny);
+
+   let world = random_scene();
+   let lookfrom = Vec3::new(13.0, 2.0, 3.0);
+   let lookat = Vec3::new(0.0, 0.0, 0.0);
+   let dist_to_focus= 10.0;
+   let aperture = 0.1;
+   let camera = Camera::new(
+       lookfrom,
+       lookat,
+       Vec3::new(0.0,1.0, 0.0),
+       20.0, nx as f32 / ny as f32,
+       aperture, dist_to_focus);
 
     for j in (0..ny).rev() {
         for i in 0..nx {
