@@ -1,154 +1,3 @@
-Finishing Up Ray Tracing in a weekend
-
-Splitting files into directories
-https://doc.rust-lang.org/rust-by-example/mod/split.html
-
-## Traits
-
-## Vec
-
-## Sized
-http://huonw.github.io/blog/2015/01/the-sized-trait/
-
-
-```
-/Users/srushton/.cargo/bin/cargo check --color=always --all --all-targets
-    Checking day4 v0.1.0 (/Users/srushton/projects/rushtonality/rust/my-tour-of-rust/wip/day4)
-error[E0277]: the size for values of type `Hitable` cannot be known at compilation time
-  --> src/raytrace/mod.rs:55:5
-   |
-55 |     list : LinkedList<Hitable>
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^ doesn't have a size known at compile-time
-   |
-   = help: the trait `std::marker::Sized` is not implemented for `Hitable`
-   = note: to learn more, visit <https://doc.rust-lang.org/book/second-edition/ch19-04-advanced-types.html#dynamically-sized-types-and-the-sized-trait>
-   = help: consider adding a `where Hitable: std::marker::Sized` bound
-   = note: required by `std::collections::LinkedList`
-```
-
-
-http://smallcultfollowing.com/babysteps/blog/2016/11/02/associated-type-constructors-part-1-basic-concepts-and-introduction/
-
-
-https://stackoverflow.com/questions/25740916/how-do-you-actually-use-dynamically-sized-types-in-rust
-
-
-```
-/Users/srushton/.cargo/bin/cargo check --color=always --all --all-targets
-    Checking day4 v0.1.0 (/Users/srushton/projects/rushtonality/rust/my-tour-of-rust/wip/day4)
-error[E0658]: imports can only refer to extern crate names passed with `--extern` on stable channel (see issue #53130)
- --> src/main.rs:3:5
-  |
-1 | pub mod raytrace;
-  | ----------------- not an extern crate passed with `--extern`
-2 | 
-3 | use raytrace::vec::Vec3;
-  |     ^^^^^^^^
-  |
-note: this import refers to the module defined here
- --> src/main.rs:1:1
-  |
-1 | pub mod raytrace;
-  | ^^^^^^^^^^^^^^^^^
-
-error[E0658]: imports can only refer to extern crate names passed with `--extern` on stable channel (see issue #53130)
- --> src/main.rs:3:5
-  |
-1 | pub mod raytrace;
-  | ----------------- not an extern crate passed with `--extern`
-2 | 
-3 | use raytrace::vec::Vec3;
-  |     ^^^^^^^^
-  |
-note: this import refers to the module defined here
- --> src/main.rs:1:1
-  |
-1 | pub mod raytrace;
-  | ^^^^^^^^^^^^^^^^^
-
-warning: unused import: `raytrace::vec::Vec3`
- --> src/main.rs:3:5
-  |
-3 | use raytrace::vec::Vec3;
-  |     ^^^^^^^^^^^^^^^^^^^
-  |
-  = note: #[warn(unused_imports)] on by default
-
-warning: unused import: `raytrace::vec::Vec3`
- --> src/main.rs:3:5
-  |
-3 | use raytrace::vec::Vec3;
-  |     ^^^^^^^^^^^^^^^^^^^
-  |
-  = note: #[warn(unused_imports)] on by default
-
-error[E0061]: this function takes 2 parameters but 1 parameter was supplied
-  --> src/main.rs:75:23
-   |
-20 | fn color(r : raytrace::ray::Ray, world : &raytrace::Hitable) -> raytrace::vec::Vec3 {
-   | ----------------------------------------------------------------------------------- defined here
-...
-75 |             let col = color(r);
-   |                       ^^^^^^^^ expected 2 parameters
-
-error[E0061]: this function takes 2 parameters but 1 parameter was supplied
-  --> src/main.rs:75:23
-   |
-20 | fn color(r : raytrace::ray::Ray, world : &raytrace::Hitable) -> raytrace::vec::Vec3 {
-   | ----------------------------------------------------------------------------------- defined here
-...
-75 |             let col = color(r);
-   |                       ^^^^^^^^ expected 2 parameters
-
-error: aborting due to 2 previous errors
-
-Some errors occurred: E0061, E0658.
-For more information about an error, try `rustc --explain E0061`.
-error: Could not compile `day4`.
-warning: build failed, waiting for other jobs to finish...
-error: aborting due to 2 previous errors
-
-Some errors occurred: E0061, E0658.
-For more information about an error, try `rustc --explain E0061`.
-error: Could not compile `day4`.
-
-To learn more, run the command again with --verbose.
-
-Process finished with exit code 101 
-```
-
-
-Chapter 5 kicked my butt.  I had to circle
-back around on heap vs stack, ownership, traits, etc.
-
-
-
-The book uses the common C/C++ idea of passing an out parameter
-of a reference and then using that to get the output of the
-function.  I was doing a direct port of this in Rust and it
-was working, until I got to chapter 8. When a pointer to 
-material was added to the hit record.
-
-At this point with Rust's ownership rules, I was having a hard
-time to continue with this approach.
-
-Changed this to return an Option with the Hit Record instead of
-having it as an out paramater.
-
-
-Box
-
-Option
-
-
-
-
-
-
-
-
-
-
 It has been two weeks since the last installment of my 2-3
 post a week blog.  As I noted in an earlier post.  I am
 committing to myself to spend at least an hour per day learning
@@ -205,9 +54,78 @@ pub mod camera;
 pub mod material;
 pub mod ray;
 pub mod vec;
+
 ```
 
 ## Chapter 5 - Traits, Collections and Polymorphism
+
+### Traits
+This chapter introduced the very common object orient concept of
+inheritance and polymorphism. 
+
+```
+class hitable {
+    public:
+        virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
+};
+
+class sphere: public hitable  {
+    public:
+        sphere() {}
+        sphere(vec3 cen, float r, material *m) : center(cen), radius(r), mat_ptr(m)  {};
+        virtual bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
+        vec3 center;
+        float radius;
+};
+
+class hitable_list: public hitable  {
+    public:
+        hitable_list() {}
+        hitable_list(hitable **l, int n) {list = l; list_size = n; }
+        virtual bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
+        hitable **list;
+        int list_size;
+};
+```
+
+So now I needed to create my first trait.  Here I decided to do a direct
+port of the C++ code, and used an out parameter (&mut HitRecord) to return
+the results.  I decision causes me many headaches later, as discussed below.
+```
+pub trait Hitable {
+    fn hit(&self, r : ray::Ray, t_min : f32, t_max : f32, rec : &mut HitRecord) -> bool;
+}
+```
+
+### Polymorphism
+The follow code, does not work and that would seem obvious, but
+how do I have a polymorphic pointer or reference.
+```
+    let a : Hitable = Sphere::new(...);
+    let b : Hitable = HitableList::new(...); 
+```
+
+So I thought about this, but how is ownership going to work here.
+This still did not feel right. 
+```
+    let a : &Hitable = &Sphere::new(...);
+    let b : &Hitable = &HitableList::new(...);
+```
+The I found out about [Box](https://doc.rust-lang.org/book/ch15-01-box.html).
+This is seems to mostly parallel the idea of a pure pointer in C++ and
+the memory is allocated in the heap, so that seemed to be what I 
+needed.
+
+### Collections
+With this knowledge, I can now create the my list.  I decided to
+use [Vec](https://doc.rust-lang.org/std/vec/struct.Vec.html) as my
+underlying collection.  This left me with the following
+for HitableList.
+```
+pub struct HitableList {
+    list : Vec<Box<Hitable>>,
+}
+```
 
 
 ## Chapter 6 - drand48() - Crates 
@@ -242,7 +160,7 @@ search add using the npm command in the NodeJS/Javascript world.
 This chapter was fairly uneventful regarding learning new Rust
 concepts.
 
-## Chapter 8
+## Chapter 8 - HitRecord and Material
 This chapter is where I hit a wall, and learning Rust got real!
 The book uses the common C/C++ idea of passing an out parameter
 of a reference and then using that to get the output of the
@@ -289,10 +207,27 @@ pub struct HitRecord {
 ```
 
 ### Ownership and Borrowing
+One of the key concepts of Rust is the idea of 
+[ownership of memory](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html).
+Rust tries to solve some of the core issues with languages like C++
+where memory leaks and corruption can happen fairly easily with out
+using a Garbage collection mechanism.  There are way to do [reference
+counting](https://doc.rust-lang.org/book/ch15-04-rc.html) in Rust, but
+by default you should be able to determine at compile time if
+ownership is being honored correctly. 
 
 ### Moving vs Copying
+Previously with the Vec3, Ray, and HitRecord classes, I did
+not have to worry about this much since they could be copied.
+Now if I did not pass by reference, I was doing a move. 
 
 ### Out References
+Previously I mentioned that I decided to do a direct port of the
+C++ code in regards to an out parameter.  Here I decided that
+a better approach would be to just return the struct that I 
+created in the function and let Rust's move logic deal
+with the passing of the ownership of the struct out of the
+method.
 
 ### Option returns to handle nulls
 So now that my hit function returns/moves the struct out of
@@ -300,9 +235,64 @@ the function, what happens when I need to return a null
 pointer.  This is where the [Option](https://doc.rust-lang.org/std/option/enum.Option.html)
 enum comes into play.
 
+### Final implementations using Option
+```
+impl Hitable for Sphere {
+    fn hit(&self, r : ray::Ray, t_min : f32, t_max : f32) -> Option<HitRecord> {
+        let oc = r.origin() - self.center;
+        let a = vec::dot(r.direction(), r.direction());
+        let b = vec::dot(oc, r.direction());
+        let c = vec::dot(oc, oc) - self.radius*self.radius;
+        let discriminant = b*b - a*c;
+        if discriminant > 0.0 {
+            let temp = (-b - f32::sqrt(b*b-a*c))/a;
+            if temp < t_max && temp > t_min {
+                let t = temp;
+                let p = r.point_at_parameter(t);
+                let normal = (p - self.center) / self.radius;
+                return Some(HitRecord{t, p, normal, material: self.material.clone()});
+            }
+            let temp = (-b + f32::sqrt(b*b-a*c))/a;
+            if temp < t_max && temp > t_min {
+                let t = temp;
+                let p = r.point_at_parameter(t);
+                let normal = (p - self.center) / self.radius;
+                return Some(HitRecord{t, p, normal, material: self.material.clone()});
+            }
+        }
+        None
+    }
+}
+impl Hitable for HitableList {
+    fn hit(&self, r: ray::Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
+        let mut result : Option<HitRecord> = None;
+        let mut closest_so_far = t_max;
+
+        for a in &self.list {
+            let temp_result = a.hit(r, t_min, closest_so_far);
+            match temp_result {
+                Some(rec) => {
+                    closest_so_far = rec.t;
+                    result = Some(rec);
+                }
+                None => {}
+            }
+        }
+        result
+    }
+}
+
+```
+
+## Chapter 9-12 - Again, not much new related to Rust
+Once I got through chapter 8 and all of the hurdles there
+the rest of the book was pretty straight forward as far as
+the coding was concerned.
 
 ## Concluding
-Like I said above.  This will likely be my last post on Rust
+The full code for this can be found
+ [here](https://github.com/rushtonality/my-tour-of-rust/tree/master/day4).
+Like I noted in the start of this post.  This will likely be my last post on Rust
 for a while.  I plan to branch off into some other technologies.
 I hope someone has found this useful, because it has been
 very valuable for me in forcing me to document what I have
